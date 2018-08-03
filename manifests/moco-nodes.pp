@@ -217,7 +217,7 @@ node /^releng-puppet\d+\.srv\.releng\.(mdc1|mdc2|scl3|use1|usw2)\.mozilla\.com$/
 node 'releng-puppet2.srv.releng.scl3.mozilla.com' {
     $aspects       = [ 'maximum-security' ]
     $only_user_ssh = true
-    include fw::profiles::distinguished_puppetmaster
+    include fw::profiles::puppetmasters
     include toplevel::server::puppetmaster
     class {
         'bacula_client':
@@ -279,6 +279,12 @@ node 'install.test.releng.mdc1.mozilla.com' {
     }
 }
 
+node 'install2.test.releng.mdc1.mozilla.com' {
+    $aspects = [ 'maximum-security' ]
+    include fw::profiles::deploystudio
+    include toplevel::server::deploystudio
+}
+
 node 'install.test.releng.mdc2.mozilla.com' {
     $aspects = [ 'maximum-security' ]
     include fw::profiles::deploystudio
@@ -288,6 +294,12 @@ node 'install.test.releng.mdc2.mozilla.com' {
             cert => secret('install_test_releng_mdc2_bacula_cert'),
             key  => secret('install_test_releng_mdc2_bacula_key');
     }
+}
+
+node 'install2.test.releng.mdc2.mozilla.com' {
+    $aspects = [ 'maximum-security' ]
+    include fw::profiles::deploystudio
+    include toplevel::server::deploystudio
 }
 
 ## Jump hosts
@@ -1130,6 +1142,22 @@ node /^shipitworker-.*\.srv\.releng\..*\.mozilla\.com$/ {
     include toplevel::server::shipitscriptworker
 }
 
+node /^tb-shipit-dev-\d+\.srv\.releng\..*\.mozilla\.com$/ {
+    $aspects                  = [ 'maximum-security' ]
+    $shipit_scriptworker_env  = 'tb-dev'
+    $timezone                 = 'UTC'
+    $only_user_ssh            = true
+    include toplevel::server::shipitscriptworker
+}
+
+node /^tb-shipit-\d+\.srv\.releng\..*\.mozilla\.com$/ {
+    $aspects                  = [ 'maximum-security' ]
+    $shipit_scriptworker_env  = 'tb-prod'
+    $timezone                 = 'UTC'
+    $only_user_ssh            = true
+    include toplevel::server::shipitscriptworker
+}
+
 # Treescript workers
 node /^treescriptworker-dev\d*\.srv\.releng\..*\.mozilla\.com$/ {
     $aspects          = [ 'maximum-security' ]
@@ -1147,28 +1175,23 @@ node /^treescriptworker\d*\.srv\.releng\..*\.mozilla\.com$/ {
     include toplevel::server::treescriptworker
 }
 
+node /^tb-tree-comm-dev-\d+\.srv\.releng\..*\.mozilla\.com$/ {
+    $aspects          = [ 'maximum-security' ]
+    $treescriptworker_env = 'tb-comm-dev'
+    $timezone         = 'UTC'
+    $only_user_ssh    = true
+    include toplevel::server::treescriptworker
+}
+
+node /^tb-tree-comm-\d+\.srv\.releng\..*\.mozilla\.com$/ {
+    $aspects          = [ 'maximum-security' ]
+    $treescriptworker_env = 'tb-comm-prod'
+    $timezone         = 'UTC'
+    $only_user_ssh    = true
+    include toplevel::server::treescriptworker
+}
+
 ## Loaners
-
-# Loaner for testing osx firewalling
-# See bug 1369566
-node 't-yosemite-r7-393.test.releng.mdc1.mozilla.com' {
-    $aspects           = [ 'low-security' ]
-    $pin_puppet_server = 'releng-puppet2.srv.releng.scl3.mozilla.com'
-    $pin_puppet_env    = 'jwatkins'
-    include toplevel::base
-}
-
-# Loaner for testing pip and python update
-# See Bug 1388816
-node 't-yosemite-r7-394.test.releng.mdc1.mozilla.com' {
-    $aspects           = [ 'low-security' ]
-    $slave_trustlevel  = 'try'
-    $pin_puppet_server = 'releng-puppet2.srv.releng.scl3.mozilla.com'
-    $pin_puppet_env    = 'dcrisan'
-    include fw::profiles::osx_taskcluster_worker
-    include toplevel::base
-    include generic_worker::disabled
-}
 
 # Loaner for testing security patches
 # See Bug 1433165 and Bug 1385050
@@ -1180,22 +1203,33 @@ node 'relops-patching1.srv.releng.mdc1.mozilla.com' {
     include toplevel::server
 }
 
-# Loaner for dividehex
-node 't-linux64-ms-279.test.releng.mdc1.mozilla.com' {
-    $aspects = [ 'low-security' ]
-    include toplevel::server
-}
-
-# Loaner for dcrisan; Bug 1410207
-node 't-linux64-ms-280.test.releng.mdc1.mozilla.com' {
-    $aspects = [ 'low-security' ]
-    # $pin_puppet_server = 'releng-puppet2.srv.releng.scl3.mozilla.com'
-    # $pin_puppet_env    = 'dcrian'
-    include toplevel::server
-}
-
 # Loaner for dividehex; bug 1445842 and 1447766
 node 'ds-test1.srv.releng.mdc2.mozilla.com' {
     $aspects = [ 'low-security' ]
     include toplevel::server
+}
+
+# Workers in osx staging pool
+node 't-yosemite-r7-380.test.releng.mdc1.mozilla.com',
+    't-yosemite-r7-394.test.releng.mdc1.mozilla.com',
+    't-yosemite-r7-100.test.releng.mdc2.mozilla.com',
+    't-yosemite-r7-101.test.releng.mdc2.mozilla.com' {
+    $aspects          = [ 'low-security' ]
+    $slave_trustlevel = 'try'
+    $tc_environment   = 'staging'
+    include fw::profiles::osx_taskcluster_worker
+    include toplevel::worker::releng::generic_worker::test::gpu
+}
+
+
+# Workers in linux talos staging pool
+node 't-linux64-ms-280.test.releng.mdc1.mozilla.com',
+    't-linux64-ms-240.test.releng.mdc1.mozilla.com',
+    't-linux64-ms-394.test.releng.mdc2.mozilla.com',
+    't-linux64-ms-395.test.releng.mdc2.mozilla.com' {
+    $aspects          = [ 'low-security' ]
+    $slave_trustlevel = 'try'
+    $tc_environment   = 'staging'
+    include fw::profiles::osx_taskcluster_worker
+    include toplevel::worker::releng::generic_worker::test::gpu
 }

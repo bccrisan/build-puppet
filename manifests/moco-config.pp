@@ -59,8 +59,8 @@ class config inherits config::base {
                           'releng-puppet2.srv.releng.mdc1.mozilla.com',
                           'releng-puppet1.srv.releng.mdc2.mozilla.com',
                           'releng-puppet2.srv.releng.mdc2.mozilla.com',
-                          'releng-puppet1.srv.releng.scl3.mozilla.com',
-#                          'releng-puppet2.srv.releng.scl3.mozilla.com',  # This intermediate CA is expiring on 2018/05/01, let's invalidate it until the cert is renewed
+#                          'releng-puppet1.srv.releng.scl3.mozilla.com', # Bug 1477554
+#                          'releng-puppet2.srv.releng.scl3.mozilla.com',
                           'releng-puppet1.srv.releng.use1.mozilla.com',
                           'releng-puppet1.srv.releng.usw2.mozilla.com',
                         ]
@@ -86,7 +86,7 @@ class config inherits config::base {
     # only way to communicate to apt that the masters are all mirrors of one another.
     # See https://bugzilla.mozilla.org/show_bug.cgi?id=906785
     $apt_repo_server            = 'puppetagain-apt.pvt.build.mozilla.org'
-    $distinguished_puppetmaster = 'releng-puppet2.srv.releng.scl3.mozilla.com'
+    $distinguished_puppetmaster = 'releng-puppet2.srv.releng.mdc1.mozilla.com'
     $puppet_again_repo          = 'https://github.com/mozilla-releng/build-puppet'
     $puppetmaster_extsyncs      = {
         'slavealloc' => {
@@ -111,7 +111,7 @@ class config inherits config::base {
     # connection
     $puppetmaster_cert_extra_names = [$apt_repo_server]
 
-    $user_python_repositories      = [ 'https://pypi.pvt.build.mozilla.org/pub', 'https://pypi.pub.build.mozilla.org/pub' ]
+    $user_python_repositories      = [ 'https://pypi.pub.build.mozilla.org/pub', ]
 
     # Releng hosts are 'medium' by default.  Slaves are specifically overridden
     # with the 'low' level, and some others are flagged as 'high' or 'maximum'.
@@ -215,8 +215,8 @@ class config inherits config::base {
         'release-runner' => [ 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjq0iMalKswxR5xl0mQIMA0YdKVwxTidy4pA/IAN9e4OwOkk4iknvnfpzAft7F4erxDDWhETerqrVN7oVgCFtwXrLQ/OGDEFZg98dPXvMCn80+DqpKB8LlZXBf66B8UDfJJAlM2uvRsqKMCJP826k6aARmiYgKlTMUM4DR2+F7ArY/7OV4hfecx70q9hKK1ZmpMXIDQWDvcu6ltSYRmmPo4Qdzig1Yu9Yjl0KLsWHu+N5QP9McWfJ9QGYHlVsrlywjoweytwIWpFhnUIPh1OlD3YuGi9qs9pfKI4PDfKFa25FDDTLBh9RlUr0x4V1WKYDsvCr4+TKGb1gR4JGo6esZB+lx8QH+zwgxRamzst1pdM1WyFN+csyjHCX2AuWa2/qfLAJIglqXRcEfXEy26GclP6d1uRK4s2vCF9YmLO8FGbvqqlC1rg36pOjR8WGJAGY4eB1AsQSW1HKqvB2exDv+90FSV9iTmCE8aR3mxSLrE1zTJfeNn9x07UURtBStq83PMA8vUjRvKP0mLyKZ5Bpne3rNUO192g/6+4KAuOxrzS/70dlPzmtFhZOapsFcKsIAj3zlu7JGfwOt8ycOLLlH3pjQIKq3JUaO3FgiYXvEB92VhbDadngVJiiq+8VUlcGSFSrFMg6idx2Vu9EAs5zPjYCA5k1pKQ+340POr5oxHw== Releng RSA key release-runner on 2017-05-19' ],
         'aws-ssh-key'    => [ 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC9iiSg20Kr4F/L9GfkJauYw15zxb8ND6zMrfoPha7nj2hzc+E7D8fzZzWyuSBFeH2N1LqJCMw0UQGhEX555iSmRk6Dn0tJQjM8pg27VbuYjNWpBH+Tdi34qyK/BWc36dNPF741paEiWZHqfq6HEMU/xjLRcUGXzjBFgx6hI/7bCd4Q8g+oD57tCxWtSPMoz7zan1eJUzPrw9T/EJCqVzjp5d6LIpMeCZ8n6xbaS8GmQk2fDxXpkVKHaxCPZ4i2tgVG5Bjei+Z451GgTgWmre/EbhbY8vtBs9UTyqmiioZX/2L3xOzqr3sArS4UPyJKSUKISDIOnyyKjzaWRkHciqBq6p15f+FfwaYLQXjfRapyGEfB/4O7t7Qt2E/2Xyi+LebIKS8PG1SKdNCL8vjeSZ6tQtAGQ6aKtQL285r28w3pdW5MIrhW5eafwGyqh0byGx6F04eqxyncWsA2EWkzpWwM9mDLRit3DrpeFMx0ikcMsDVpwJUTkUAQT/3la2EA6sn3MMijSc/nJIhvUoDbnxAZhmiCJgztTCXaPEpwNmvvYsa9urqll6TT/aI8hIL3CwQMAgcpNHS+hpiZrSuDyy9Ny+nUvT9fMlFYopTkmDL/D1XJT05osDqVEJgWkFaHfDn94iDWD6CTnUua0lWjuHqYpIZh1BpVsYZ/7HQrDJSKVw== Releng RSA key aws-releng on 2017-05-19' ],
     }
-    $signing_server_ssl_private_keys = hiera_hash('signing_server_ssl_private_keys')
-    $signing_server_ssl_certs        = hiera_hash('signing_server_ssl_certs')
+    $signing_server_ssl_private_keys = secret('signing_server_ssl_private_keys')
+    $signing_server_ssl_certs        = secret('signing_server_ssl_certs')
 
     $jumphost_admin_users = [
         # a few folks from relops..
@@ -280,7 +280,6 @@ class config inherits config::base {
         'apop', # Bug 1442124
         'acraciun', # Bug 1443668
         'tprince', # Bug 1449013
-        'lguo', # Bug 1459746
     ]
 
     $users = $::fqdn ? {
@@ -693,8 +692,8 @@ class config inherits config::base {
 
     # scriptworker
     $scriptworker_root                        = '/builds/scriptworker' # Used by scriptworker instances
-    $scriptworker_gpg_private_keys            = hiera_hash('scriptworker_gpg_private_keys')
-    $scriptworker_gpg_public_keys             = hiera_hash('scriptworker_gpg_public_keys')
+    $scriptworker_gpg_private_key             = secret('scriptworker_gpg_private_key')
+    $scriptworker_gpg_public_key              = secret('scriptworker_gpg_public_key')
 
     $l10n_bumper_env_config = {
         'mozilla-central' => {

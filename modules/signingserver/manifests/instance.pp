@@ -13,7 +13,9 @@ define signingserver::instance(
         $focus_jar_key_name = '', $focus_jar_digestalg = '', $focus_jar_sigalg = '',
         $signcode_timestamp = 'yes',
         $concurrency        = 4,
-        $signcode_maxsize   = 157286400) {
+        # When signcode_maxsize changes, please inform
+        # secops+fx-sig-verify@m.c as they have similar limit.
+        $signcode_maxsize   = 367001600) {
     include config
     include signingserver::base
     include users::signer
@@ -115,13 +117,17 @@ define signingserver::instance(
             packages        => $virtualenv_packages;
     }
 
-    mercurial::repo {
-        "signing-${title}-tools":
-            require => Python::Virtualenv[$basedir],
-            hg_repo => $tools_repo,
-            dst_dir => "${basedir}/tools",
-            user    => $user,
-            rev     => $code_tag;
+    # system hg is broken on mac signing servers =\
+    # a human should clone using the venv's bin/hg
+    if $::operatingsystem != 'Darwin' {
+        mercurial::repo {
+            "signing-${title}-tools":
+                require => Python::Virtualenv[$basedir],
+                hg_repo => $tools_repo,
+                dst_dir => "${basedir}/tools",
+                user    => $user,
+                rev     => $code_tag;
+        }
     }
 
     if $ssl_cert == '' {

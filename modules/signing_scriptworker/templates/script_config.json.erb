@@ -5,8 +5,7 @@
     "my_ip": "<%= @ipaddress %>",
     "signing_server_config": "<%= scope.lookupvar("signing_scriptworker::settings::root") %>/passwords.json",
     "ssl_cert": "<%= scope.lookupvar("signing_scriptworker::settings::root") %>/lib/python<%= scope.lookupvar("signing_scriptworker::settings::virtualenv_version") %>/site-packages/signingscript/data/host.cert",
-    "schema_file": "<%= scope.lookupvar("signing_scriptworker::settings::root") %>/lib/python<%= scope.lookupvar("signing_scriptworker::settings::virtualenv_version") %>/site-packages/signingscript/data/signing_task_schema.json",
-    "taskcluster_scope_prefix": "<%= @env_config['scope_prefix'] %>",
+    "taskcluster_scope_prefixes": <%= require "json"; JSON.pretty_generate(@env_config['scope_prefixes']) %>,
 
     "signtool": "<%= scope.lookupvar("signing_scriptworker::settings::root") %>/bin/signtool",
     "token_duration_seconds": 7200,
@@ -14,5 +13,8 @@
     "dmg": "<%= @dmg_location %>",
     "hfsplus": "<%= @hfsplus_location %>",
     "zipalign": "<%= @zipalign_location %>",
-    "gpg_pubkey": "<%= scope.lookupvar("signing_scriptworker::settings::root") %>/KEY"
+    "gpg_pubkey": "<%= scope.lookupvar("signing_scriptworker::settings::root") %>/KEY",
+
+    "datadog_port": <%= scope.lookupvar("signing_scriptworker::settings::datadog_port") %>,
+    "datadog_host": "<%= scope.lookupvar("signing_scriptworker::settings::datadog_host") %>"
 }

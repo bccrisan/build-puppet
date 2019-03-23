@@ -10,6 +10,7 @@ class signing_scriptworker {
     include tweaks::swap_on_instance_storage
     include packages::gcc
     include packages::make
+    include packages::xz_devel
     include tweaks::scriptworkerlogrotate
 
     $env_config          = $signing_scriptworker::settings::env_config[$signing_scriptworker_env]
@@ -61,6 +62,7 @@ class signing_scriptworker {
 
             cot_job_type             => 'signing',
             cot_product              => $env_config['cot_product'],
+            github_oauth_token       => $env_config['github_oauth_token'],
 
             sign_chain_of_trust      => $env_config["sign_chain_of_trust"],
             verify_chain_of_trust    => $env_config["verify_chain_of_trust"],
@@ -121,5 +123,6 @@ class signing_scriptworker {
         api_key            => $env_config['datadog_api_key'],
         puppet_run_reports => false,
         puppetmaster_user  => puppet,
+        dogstatsd_port     => $signing_scriptworker::settings::datadog_port,
     }
 }

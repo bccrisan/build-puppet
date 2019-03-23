@@ -26,10 +26,10 @@ class packages::nrpe {
                         Anchor['packages::nrpe::begin'] ->
                         package {
                             'nagios-nrpe-server':
-                                ensure          => '3.2.1-1',
+                                ensure          => '3.2.1-1ubuntu1',
                                 install_options => [ '--no-install-recommends' ];
                             'nagios-nrpe-plugin':
-                                ensure          => '3.2.1-1',
+                                ensure          => '3.2.1-1ubuntu1',
                                 install_options => [ '--no-install-recommends' ];
                             'nagios-plugins-extra':
                                 ensure          => '2.1.2-2ubuntu2',
@@ -43,12 +43,15 @@ class packages::nrpe {
         }
         CentOS: {
             package {
-                'nrpe':
-                    ensure => latest;
-                'nagios-plugins-nrpe':
-                    ensure => latest;
                 'nagios-plugins-all':
                     ensure => latest;
+            }
+            realize(Packages::Yumrepo['nrpe'])
+            package {
+                'nrpe':
+                    ensure => '3.2.1-6.el6';
+                'nagios-plugins-nrpe':
+                    ensure => '3.2.1-6.el6';
             }
         }
         Darwin: {

@@ -186,11 +186,23 @@ class packages::setup {
 
                 'dhcp':
                     url_path => "repos/yum/custom/dhcp/${::architecture}";
+
+                'libsodium':
+                    url_path => "repos/yum/custom/libsodium/${::architecture}";
+
+                'xdelta':
+                    url_path => "repos/yum/custom/mozilla-xdelta/${::architecture}";
+
+                'nrpe':
+                    url_path => "repos/yum/custom/nrpe/${::architecture}";
+
             }
 
             # to flush the metadata cache, increase this value by one (or
             # anything, really, just change it).
-            $repoflag = 95
+
+            $repoflag = 101
+
             file {
                 '/etc/.repo-flag':
                     content =>
@@ -225,7 +237,7 @@ class packages::setup {
             }
             # to flush the package index, increase this value by one (or
             # anything, really, just change it).
-            $repoflag = 45
+            $repoflag = 47
             file {
                 '/etc/.repo-flag':
                     content =>

@@ -237,85 +237,6 @@ class config::base {
     # buildmaster_ssh_key_caminobld_dsa.
     $buildmaster_ssh_keys                = []
 
-    # releaserunner
-
-    # fqdn:port of the buildmaster with which to invoke 'buildbot sendchange'
-    $releaserunner_sendchange_master     = ''
-    # hg host name used in release-runner
-    $releaserunner_hg_host               = ''
-    # ssh username and key to use to make commits to hg
-    $releaserunner_hg_username           = ''
-    $releaserunner_hg_ssh_key            = ''
-    # email to/from addresses and smtp server to use to send notifications
-    $releaserunner_notify_from           = ''
-    $releaserunner_smtp_server           = ''
-    # ssh username and (hand-installed) key to use to login to all buildmasters
-    # and perform updates and reconfigs
-    $releaserunner_ssh_username          = ''
-    # URL for masters.json, defaulting to $master_json from above
-    $releaserunner_production_masters    = $master_json
-    # mercurial repository and branch for buildbotcustom
-    $releaserunner_buildbotcustom_branch = 'production-0.8'
-    $releaserunner_buildbotcustom        = 'https://hg.mozilla.org/build/buildbotcustom'
-    # mercurial repository and branch for tools
-    $releaserunner_tools                 = 'https://hg.mozilla.org/build/tools'
-    $releaserunner_tools_branch          = 'default'
-    # root directory for releaserunner; this must be under /builds
-    $releaserunner_root                  = '/builds/releaserunner'
-    $releaserunner3_root                  = '/builds/releaserunner3'
-
-    $releaserunner_env_config = {
-        'dev'  => {
-            ship_it_root             => '',
-            ship_it_username         => '',
-            ship_it_password         => '',
-            notify_to                => '',
-            notify_to_announce       => '',
-            taskcluster_client_id    => '',
-            taskcluster_access_token => '',
-        },
-        'prod' => {
-            ship_it_root             => '',
-            ship_it_username         => '',
-            ship_it_password         => '',
-            notify_to                => '',
-            notify_to_announce       => '',
-            taskcluster_client_id    => '',
-            taskcluster_access_token => '',
-        }
-    }
-
-    $releaserunner3_env_config = {
-        'dev'  => {
-            ship_it_root             => '',
-            ship_it_username         => '',
-            ship_it_password         => '',
-            notify_to                => '',
-            notify_to_announce       => '',
-            taskcluster_client_id    => '',
-            taskcluster_access_token => '',
-            shipitv2_api_root        => '',
-            auth0_client_id          => '',
-            auth0_client_secret      => '',
-            auth0_auth_domain        => '',
-            auth0_audience           => '',
-        },
-        'prod' => {
-            ship_it_root             => '',
-            ship_it_username         => '',
-            ship_it_password         => '',
-            notify_to                => '',
-            notify_to_announce       => '',
-            taskcluster_client_id    => '',
-            taskcluster_access_token => '',
-            shipitv2_api_root        => '',
-            auth0_client_id          => '',
-            auth0_client_secret      => '',
-            auth0_auth_domain        => '',
-            auth0_audience           => '',
-        }
-    }
-
     # runner task settings
 
     $runner_hg_tools_path          = '/tools/checkouts/build-tools'
@@ -330,29 +251,6 @@ class config::base {
 
     $runner_buildbot_slave_dir     = ''
     $runner_clobberer_url          = ''
-
-    # selfserve (buildapi agent)
-
-    # fqdn:port of the buildmaster with which to invoke 'buildbot sendchange'
-    $selfserve_agent_sendchange_master = ''
-    # URL for masters.json, defaulting to $master_json from above
-    $selfserve_agent_masters_json      = $master_json
-    # URL for branches.json
-    $selfserve_agent_branches_json     = ''
-    # URL for allthethings.json
-    $selfserve_agent_allthethings_json = ''
-    # API URL for clobberer
-    $selfserve_agent_clobberer_url     = ''
-    # carrot (rabbitmq) credentials
-    $selfserve_agent_carrot_hostname   = ''
-    $selfserve_agent_carrot_vhost      = ''
-    $selfserve_agent_carrot_userid     = ''
-    $selfserve_agent_carrot_exchange   = ''
-    $selfserve_agent_carrot_queue      = ''
-    # root directory for selfserve; this must be under /builds
-    $selfserve_agent_root              = '/builds/selfserve-agent'
-
-    $selfserve_private_url             = ''
 
     # slaveapi
 
@@ -372,7 +270,7 @@ class config::base {
     # roller
     $roller_username             = 'roller'
 
-    $roller_image_tag_prod       = '1.0.7'
+    $roller_image_tag_prod       = 'latest'
     $roller_image_tag_dev        = 'latest'
 
     # roller git repo
@@ -433,74 +331,6 @@ class config::base {
     $bacula_fd_port     = ''    # port on the director
     $bacula_cacert      = ''    # full text of the CA cert signing the director's keys
     $bacula_pki_enabled = true  # newer bacula client pki encrypts data transfer
-
-    # Buildbot <-> Taskcluster bridge configuration
-    $buildbot_bridge_root                               = ''
-    $buildbot_bridge_tclistener_pulse_exchange_basename = ''
-    $buildbot_bridge_worker_type                        = ''
-    $buildbot_bridge_provisioner_id                     = ''
-    $buildbot_bridge_bblistener_pulse_exchange          = ''
-    $buildbot_bridge_worker_group                       = ''
-    $buildbot_bridge_worker_id                          = ''
-    $buildbot_bridge_reflector_interval                 = 60
-
-    $buildbot_bridge_env_config = {
-        'dev'  => {
-            version              => '',
-            client_id            => '',
-            access_token         => '',
-            dburi                => '',
-            pulse_username       => '',
-            pulse_password       => '',
-            pulse_queue_basename => '',
-            restricted_builders  => [
-                '',
-            ],
-            ignored_builders     => [
-                '',
-            ],
-        },
-        'prod' => {
-            version              => '',
-            client_id            => '',
-            access_token         => '',
-            dburi                => '',
-            pulse_username       => '',
-            pulse_password       => '',
-            pulse_queue_basename => '',
-            restricted_builders  => [
-                '',
-            ],
-            ignored_builders     => [
-                '',
-            ],
-        }
-    }
-
-    # Buildbot Bridge 2 configuration
-    $buildbot_bridge2_root                        = ''
-    $buildbot_bridge2_reflector_poll_interval     = 60
-    $buildbot_bridge2_reflector_reclaim_threshold = 600
-
-    $buildbot_bridge2_env_config = {
-        'dev' => {
-            version               => '',
-            client_id             => '',
-            access_token          => '',
-            dburi                 => '',
-            selfserve_private_url => '',
-        },
-        'prod' => {
-            version               => '',
-            client_id             => '',
-            access_token          => '',
-            dburi                 => '',
-            selfserve_private_url => '',
-        }
-    }
-
-    # TC host-secrets
-    $tc_host_secrets_servers       = ['tc-host-secrets']
 
     # TC signing workers
     $signingworker_tools_repo      = 'https://hg.mozilla.org/build/tools'

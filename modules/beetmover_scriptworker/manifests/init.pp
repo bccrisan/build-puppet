@@ -57,6 +57,7 @@ class beetmover_scriptworker {
 
             cot_job_type             => 'beetmover',
             cot_product              => $env_config['cot_product'],
+            github_oauth_token       => $env_config['github_oauth_token'],
 
             sign_chain_of_trust      => $env_config["sign_chain_of_trust"],
             verify_chain_of_trust    => $env_config["verify_chain_of_trust"],
@@ -71,7 +72,31 @@ class beetmover_scriptworker {
             mode      => '0600',
             owner     => $users::builder::username,
             group     => $users::builder::group,
-            content   => template($env_config["config_template"]),
+            content   => template('beetmover_scriptworker/script_config.json.erb'),
             show_diff => false;
+    }
+
+    class { 'telegraf':
+        hostname => $hostname,
+        outputs  => {
+            'influxdb' => {
+                'urls'     => [ secret('releng_influx_url') ],
+                'database' => 'releng',
+                'username' => 'releng_wo',
+                'password' => secret('releng_influx_wo_password'),
+            }
+        },
+        inputs   => {
+            'cpu'             => {
+                'percpu'   => true,
+                'totalcpu' => true,
+            },
+            'net'             => {
+            },
+            'socket_listener' => {
+                'service_address' => 'udp://127.0.0.1:8094',
+                'data_format'     => 'influx'
+            }
+        }
     }
 }

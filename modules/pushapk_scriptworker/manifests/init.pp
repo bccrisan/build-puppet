@@ -52,6 +52,7 @@ class pushapk_scriptworker {
 
             cot_job_type             => 'pushapk',
             cot_product              => $pushapk_scriptworker::settings::cot_product,
+            github_oauth_token       => $pushapk_scriptworker::settings::github_oauth_token,
 
             sign_chain_of_trust      => $pushapk_scriptworker::settings::sign_chain_of_trust,
             verify_chain_of_trust    => $pushapk_scriptworker::settings::verify_chain_of_trust,
@@ -93,10 +94,24 @@ class pushapk_scriptworker {
                     content     => $google_play_config['release']['certificate'];
             }
         }
-        'mobile-prod': {
+        'mobile-dep': {
             file {
+                $google_play_config['fenix']['certificate_target_location']:
+                    content     => $google_play_config['fenix']['certificate'];
                 $google_play_config['focus']['certificate_target_location']:
                     content     => $google_play_config['focus']['certificate'];
+                $google_play_config['reference-browser']['certificate_target_location']:
+                    content     => $google_play_config['reference-browser']['certificate'];
+            }
+        }
+        'mobile-prod': {
+            file {
+                $google_play_config['fenix']['certificate_target_location']:
+                    content     => $google_play_config['fenix']['certificate'];
+                $google_play_config['focus']['certificate_target_location']:
+                    content     => $google_play_config['focus']['certificate'];
+                $google_play_config['reference-browser']['certificate_target_location']:
+                    content     => $google_play_config['reference-browser']['certificate'];
             }
         }
         default: {

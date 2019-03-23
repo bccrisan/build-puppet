@@ -8,7 +8,6 @@ class shipit_scriptworker::settings {
     include python3::settings
 
     $root                       = $config::scriptworker_root
-    $python3_virtualenv_version = $python3::settings::python3_virtualenv_version
 
     $ship_it_stage_instance_scope = 'project:releng:ship-it:server:staging'
     $ship_it_stage_instance_config = {
@@ -16,6 +15,9 @@ class shipit_scriptworker::settings {
         timeout_in_seconds        => 60,
         username                  => 'shipit-scriptworker-stage',
         password                  => secret('shipit_scriptworker_ship_it_password_dev'),
+        api_root_v2               => 'https://api.shipit.staging.mozilla-releng.net',
+        taskcluster_client_id     => 'project/releng/scriptworker/shipit/dev',
+        taskcluster_access_token  => secret('shipit_scriptworker_taskcluster_access_token_dev'),
     }
 
     $env_config = {
@@ -54,6 +56,9 @@ class shipit_scriptworker::settings {
                 timeout_in_seconds        => 60,
                 username                  => 'shipit-scriptworker',
                 password                  => secret('shipit_scriptworker_ship_it_password_prod'),
+                api_root_v2               => 'https://shipit-api.mozilla-releng.net',
+                taskcluster_client_id     => 'project/releng/scriptworker/shipit/production',
+                taskcluster_access_token  => secret('shipit_scriptworker_taskcluster_access_token_prod'),
             },
         },
       },
@@ -70,7 +75,7 @@ class shipit_scriptworker::settings {
         cot_product              => 'thunderbird',
 
         ship_it_instances        => {
-            "project:comm:thunderbird:releng:ship-it:staging" => $ship_it_stage_instance_config,
+            "project:comm:thunderbird:releng:ship-it:server:staging" => $ship_it_stage_instance_config,
         },
       },
       'tb-prod'  => {
@@ -86,19 +91,20 @@ class shipit_scriptworker::settings {
         cot_product              => 'thunderbird',
 
         ship_it_instances        => {
-            "project:comm:thunderbird:releng:ship-it:staging" => $ship_it_stage_instance_config,
-            'project:comm:thunderbird:releng:ship-it:production' => {
+            "project:comm:thunderbird:releng:ship-it:server:staging" => $ship_it_stage_instance_config,
+            'project:comm:thunderbird:releng:ship-it:server:production' => {
                 api_root                  => 'https://ship-it.mozilla.org',
                 timeout_in_seconds        => 60,
                 username                  => 'shipit-scriptworker',
                 password                  => secret('shipit_scriptworker_ship_it_password_prod'),
+                api_root_v2               => 'https://shipit-api.mozilla-releng.net',
+                taskcluster_client_id     => 'project/comm/thunderbird/releng/scriptworker/shipit/prod',
+                taskcluster_access_token  => secret('comm_thunderbird_shipit_scriptworker_taskcluster_access_token_prod'),
             },
         },
       },
     }
 
-    $mark_as_shipped_schema_file = "${root}/lib/python${python3_virtualenv_version}/site-packages/shipitscript/data/mark_as_shipped_task_schema.json"
-    $mark_as_started_schema_file = "${root}/lib/python${python3_virtualenv_version}/site-packages/shipitscript/data/mark_as_started_task_schema.json"
     $work_dir                   = "${root}/work"
     $task_script                = "${root}/bin/shipitscript"
 

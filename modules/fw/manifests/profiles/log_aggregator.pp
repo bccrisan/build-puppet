@@ -9,16 +9,13 @@ class fw::profiles::log_aggregator {
             include ::fw::roles::ssh_from_rejh_logging
             include ::fw::roles::nrpe_from_nagios
             include ::fw::roles::syslog_from_mdc1_releng
+            include ::fw::roles::syslog_from_mtv2_qa
         }
         /.*\.mdc2\.mozilla\.com/: {
             include ::fw::roles::ssh_from_rejh_logging
             include ::fw::roles::nrpe_from_nagios
             include ::fw::roles::syslog_from_mdc2_releng
-        }
-        /.*\.scl3.mozilla\.com/: {
-            include ::fw::roles::ssh_from_rejh_logging
-            include ::fw::roles::nrpe_from_nagios
-            include ::fw::roles::syslog_from_scl3_releng
+            include ::fw::roles::syslog_from_mtv2_qa
         }
         default:{
             # Silently skip other DCs
